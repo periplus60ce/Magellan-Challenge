@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magellan Research Challenge</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    #message, #liveMessage {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 10px;
+    }
+    #timerContainer {
+      width: 100%;
+      background-color: #ddd;
+      height: 20px;
+      margin-top: 10px;
+    }
+    #timerBar {
+      height: 20px;
+      background-color: #4caf50;
+      width: 100%;
+      transition: width 1s linear;
+    }
+  </style>
+</head>
+<body>
+  <div id="challenge">
+    <h1>Magellan Research Challenge</h1>
+    <p id="question">Test, test, test. How many letters are in Ukrainian alphabet?</p>
+    <form id="answerForm">
+      <input type="text" id="answerInput" placeholder="Your answer here">
+    </form>
+    <div id="message"></div>
+    <button id="continueBtn" class="hidden">CLICK TO CONTINUE</button>
+  </div>
+
+  <div id="instructions" class="hidden">
+    <h2>Instructions</h2>
+    <p>You will be presented with 21 questions. Use a variety of OSR tools and techniques to find the answers. Good luck!</p>
+    <button id="letsGoBtn">Let's go</button>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <h1>Magellan Challenge</h1>
+    <p id="liveInstruction">Press "ENTER" to confirm your answer.</p>
+    <p id="liveQuestion"></p>
+    <form id="liveAnswerForm">
+      <input type="text" id="liveAnswer" placeholder="Your answer here">
+    </form>
+    <div id="liveMessage"></div>
+    <div id="timerContainer">
+      <div id="timerBar"></div>
+    </div>
+    <p id="scoreDisplay"></p>
+    <button id="restartBtn" class="hidden">Restart Challenge</button>
+  </div>
+
+   <script>
+    const questions = [
+      { question: "Refer to government databases (laws, reports, statistics) What number is stamped at the bottom left of the first page of a hyperlinked document in the section regarding wildcat dumping in Cochise County, AZ, code compliance?", answer: "030309993" },
+      { question: "Try using Google tools. What country is the domain of the Internet article published on May 6, 2001, about poultry waste as a substitute for fishmeal? Also, append the number of pages of the article to your answer.", answer: "Iran16" },
+      { question: "Probably somewhere in social media (X, LinkedIn, forums). Your answer is between @ and .com. Look for the article about publishing house liked by Jessica Alba.", answer: "wmeagency" },
+      { question: "Search some academic papers (Google Scholar, ResearchGate). What is the country where the photograph was taken? Photograph #6 p.34. The Dragonflies of Europe by R.R. Askew (revised edition 2004).", answer: "Switzerland" },
+      { question: "Look in corporate records, official business registries, SEC filings. What is the first word of the previous legal name (starts with a “W”) of “Corporation X” in NC, USA? Prepend SOSID to your answer.", answer: "1899761Westinghouse" },
+      { question: "Leverage Geocode.xyz. Generate coordinates for Skole. Copy and paste them into the search bar of Google maps. Find the closest restaurant to the pin. View the pictures. Look at the bookshelf. The fourth book on the right (it is navy blue). The answer is the country of origin of the author.", answer: "Argentina" },
+      { question: "Leverage Geocode.xyz and ChatGPT. Find the song “Sous le ciel de Paris\" by Edith Piaf, copy and paste the lyrics into ChatGPT and prompt it to identify geolocations in the song and then generate a short story with the identified geolocations. Navigate to geoparser, choose strict formatting. Once geoparsed, use the confidence level 1 location for geocoding. Once you have the name of the location, navigate back to geocode, paste the location into the search bar and generate coordinates. STOP! Look for XML button. Find the postal code. That is your answer.", answer: "75574" },
+      { question: "Geospatial data (Goolgle Earth Pro, Google Maps, Mapillary). What word is written inside of the toilet of a hotel located 23.77 mi (38.26 km) SW away from 45R VL 92652 95877?", answer: "Taj" },
+      { question: "Geospatial data again (Google Lens, Chat GPT, Google Maps, Google Earth Pro Mapillary). Use the provided image to find your answer written on the red structure. To see the structure, you should be standing 241.18 ft (73.51 m) south of the image.", answer: "TELEPHONE" },
+      { question: "Now it is time for some Google “Dorking” and Boolean logic. Your answer is the last word of passage 18 on page 11. Find a pdf file that contains words: art, war, sun in its title on a Canadian website that contains any letter in front of the word “alberta” in its URL.", answer: "battle" },
+      { question: "Explore Google trends. Your answer is the name of a city in Ireland that had the highest Google shopping interest in the most popular item among computers and electronics in 2024. Append the lowest score of interest overtime in April 2024, in that city to your answer.", answer: "Balbriggan25" },
+      { question: "Let’s check websites for malicious code (“https://virustotal.com”). Your answer is the type of cyberthreat that the website “https://www.fantasticfilms.ru” present according to BitDefender.", answer: "Phishing" },
+      { question: "Apply the same concept as before “https://www.gncr.org”. Your answer is the cyberthreat label according to alphaMountain.ai", answer: "Suspicious" },
+      { question: "Apply the same concept to “https://www.purplehoodie.com”. Your answer is the cyberthreat label according to Fortinet.", answer: "Malware" },
+      { question: "Let’s venture into dnsdumpster.com. When inspecting “bbc.com”, look for the ASN name of the subdomain IP 198.51.44.73", answer: "NSONE" },
+      { question: "Still in the dnsdumpster. What is the 12-character-long string in the URL of IP 45.121.163.23 in the MX records that are used to direct email traffic to the correct mail server for the domain “xosodaiphat.com”?", answer: "c5fd2b0b4586" },
+      { question: "Same place. What is the verification token for “jamf.com” found when inspecting “trustpilot.com”?", answer: "hCZILKggaY23aId4VBfmVA" },
+      { question: "Still there. While inspecting “ox.ac.uk”, specifically TXT records, what is the domain verification token for OpenAI? Don’t include “dv-“. Append it to the last word after the URL to a website under the image.", answer: "projectFrXjlS30zrnR8T3D1ktwxud7" },
+      { question: "Finally, out and right into “Urlscan.io”. What month was the TLS certificate for “wadefamilytree.org” issue?", answer: "August" },
+      { question: "Keep exploring “Urlscan.io”. What is the name of the city where the main IP for “ukrpravda.com.ua” is located?", answer: "Falkenstein" },
+      { question: "Almost there. X.com geo search. The information you need was posted within 5-mile radius of Snorralaug Reykholt, Iceland on April 3, 2022. What brand is the rowing machine in the video with the dance?", answer: "StairMaster" }
+    ];
+
+    let currentIndex = -1;
+    let timerInterval;
+    let timeLeft;
+    const maxTime = 1200;
+    let totalPoints = 0;
+    const maxPoints = questions.length * 100;
+
+    const challengeDiv = document.getElementById('challenge');
+    const questionEl = document.getElementById('question');
+    const answerInput = document.getElementById('answerInput');
+    const messageEl = document.getElementById('message');
+    const continueBtn = document.getElementById('continueBtn');
+    const instructionsDiv = document.getElementById('instructions');
+    const letsGoBtn = document.getElementById('letsGoBtn');
+    const quizDiv = document.getElementById('quiz');
+    const liveQuestion = document.getElementById('liveQuestion');
+    const liveAnswer = document.getElementById('liveAnswer');
+    const liveMessage = document.getElementById('liveMessage');
+    const restartBtn = document.getElementById('restartBtn');
+    const timerBar = document.getElementById('timerBar');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+
+    document.getElementById('answerForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const userAnswer = answerInput.value.trim();
+      if (userAnswer === '33') {
+        messageEl.textContent = 'Good job and good luck!';
+        continueBtn.classList.remove('hidden');
+      } else {
+        messageEl.textContent = 'Try again';
+        answerInput.value = '';
+      }
+    });
+
+    continueBtn.addEventListener('click', () => {
+      challengeDiv.classList.add('hidden');
+      instructionsDiv.classList.remove('hidden');
+    });
+
+    letsGoBtn.addEventListener('click', () => {
+      instructionsDiv.classList.add('hidden');
+      quizDiv.classList.remove('hidden');
+      currentIndex = 0;
+      renderQuestion();
+    });
+
+    function renderQuestion() {
+      if (currentIndex >= 0 && currentIndex < questions.length) {
+        liveQuestion.textContent = questions[currentIndex].question;
+        liveAnswer.value = '';
+        liveMessage.textContent = '';
+        liveAnswer.focus();
+        startTimer();
+      }
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timeLeft = maxTime;
+      updateTimerBar();
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerBar();
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          liveMessage.textContent = "Time's up! Moving to next question...";
+          currentIndex++;
+          if (currentIndex < questions.length) {
+            setTimeout(renderQuestion, 2000);
+          } else {
+            endChallenge();
+          }
+        }
+      }, 1000);
+    }
+
+    function updateTimerBar() {
+      const percent = (timeLeft / maxTime) * 100;
+      timerBar.style.width = percent + '%';
+    }
+
+    document.getElementById('liveAnswerForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const userAnswer = liveAnswer.value.trim();
+      if (userAnswer === questions[currentIndex].answer) {
+        clearInterval(timerInterval);
+        let points = 0;
+        const elapsed = maxTime - timeLeft;
+        if (elapsed <= 300) points = 100;
+        else if (elapsed <= 600) points = 50;
+        else if (elapsed <= 900) points = 25;
+        else if (elapsed <= 1200) points = 7;
+        totalPoints += points;
+
+        liveMessage.textContent = `Good job. You earned ${points} points.`;
+        currentIndex++;
+        if (currentIndex < questions.length) {
+          setTimeout(renderQuestion, 1000);
+        } else {
+          endChallenge();
+        }
+      } else {
+        liveMessage.textContent = 'Try harder';
+        liveAnswer.value = '';
+      }
+    });
+
+    function endChallenge() {
+      setTimeout(() => {
+        liveQuestion.textContent = 'Challenge Complete! Well done!';
+        liveAnswer.classList.add('hidden');
+        liveMessage.textContent = '';
+        scoreDisplay.textContent = `You earned ${totalPoints} points out of ${maxPoints} possible.`;
+        restartBtn.classList.remove('hidden');
+      }, 2000);
+    }
+
+    restartBtn.addEventListener('click', resetChallenge);
+
+    function resetChallenge() {
+      clearInterval(timerInterval);
+      currentIndex = -1;
+      totalPoints = 0;
+      scoreDisplay.textContent = '';
+      challengeDiv.classList.remove('hidden');
+      instructionsDiv.classList.add('hidden');
+      quizDiv.classList.add('hidden');
+      answerInput.value = '';
+      messageEl.textContent = '';
+      continueBtn.classList.add('hidden');
+      liveAnswer.classList.remove('hidden');
+      restartBtn.classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
