@@ -1,0 +1,59 @@
+/* styles.css */
+
+body {
+  font-family: 'Garamond', 'Georgia', serif;
+  background-image: url('background.jpg');
+  background-size: cover;
+  color: #2c1c0f;
+  padding: 40px;
+}
+
+h1, h2 {
+  font-family: 'Cinzel', serif;
+  text-shadow: 1px 1px 2px #d4af37;
+}
+
+button {
+  background-color: #d4af37;
+  color: #000;
+  border: 2px solid #8b6f27;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  border-radius: 6px;
+  font-family: 'Cinzel', serif;
+}
+
+button:hover {
+  background-color: #e8c865;
+}
+
+input[type="text"] {
+  padding: 8px;
+  border: 2px solid #8b6f27;
+  border-radius: 4px;
+  font-family: serif;
+  font-size: 16px;
+}
+
+#timerContainer {
+  background-color: #cbb994;
+  height: 20px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+#timerBar {
+  background-color: #0f4c81;
+  height: 100%;
+  border-radius: 5px;
+}
+
+blockquote {
+  font-style: italic;
+  margin-top: 20px;
+  background-color: rgba(255, 255, 240, 0.85);
+  padding: 10px;
+  border-left: 5px solid #8b6f27;
+}
