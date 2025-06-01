@@ -4,49 +4,53 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Magellan Research Challenge</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    .hidden {
-      display: none;
-    }
-    #message, #liveMessage {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    button {
-      margin-top: 10px;
-    }
-    #timerContainer {
-      width: 100%;
-      background-color: #ddd;
-      height: 20px;
-      margin-top: 10px;
-    }
-    #timerBar {
-      height: 20px;
-      background-color: #4caf50;
-      width: 100%;
-      transition: width 1s linear;
-    }
-  </style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    color: #2c1c0f;
+  }
+  .hidden {
+    display: none;
+  }
+  #message, #liveMessage {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  button {
+    margin-top: 10px;
+  }
+  #timerContainer {
+    width: 100%;
+    background-color: #ddd;
+    height: 20px;
+    margin-top: 10px;
+  }
+  #timerBar {
+    height: 20px;
+    background-color: #4caf50;
+    width: 100%;
+    transition: width 1s linear;
+  }
+</style>
 </head>
 <body>
   <div id="challenge">
     <h1>Magellan Research Challenge</h1>
     <p id="question">Test, test, test. How many letters are in Ukrainian alphabet?</p>
-    <form id="answerForm">
-      <input type="text" id="answerInput" placeholder="Your answer here">
-    </form>
+    <input type="text" id="answerInput" placeholder="Your answer here">
     <div id="message"></div>
     <button id="continueBtn" class="hidden">CLICK TO CONTINUE</button>
   </div>
 
   <div id="instructions" class="hidden">
     <h2>Instructions</h2>
-    <p>You will be presented with 21 questions. Use a variety of OSR tools and techniques to find the answers. Good luck!</p>
+    <p>You will be presented with 22 questions. Use a variety of OSR tools and techniques to find the answers. Good luck!</p>
     <button id="letsGoBtn">Let's go</button>
   </div>
 
@@ -54,18 +58,17 @@
     <h1>Magellan Challenge</h1>
     <p id="liveInstruction">Press "ENTER" to confirm your answer.</p>
     <p id="liveQuestion"></p>
-    <form id="liveAnswerForm">
-      <input type="text" id="liveAnswer" placeholder="Your answer here">
-    </form>
+    <input type="text" id="liveAnswer" placeholder="Your answer here">
     <div id="liveMessage"></div>
     <div id="timerContainer">
       <div id="timerBar"></div>
     </div>
     <p id="scoreDisplay"></p>
     <button id="restartBtn" class="hidden">Restart Challenge</button>
+    <button id="quitBtn">I quit</button>
   </div>
 
-   <script>
+  <script>
     const questions = [
       { question: "Refer to government databases (laws, reports, statistics) What number is stamped at the bottom left of the first page of a hyperlinked document in the section regarding wildcat dumping in Cochise County, AZ, code compliance?", answer: "030309993" },
       { question: "Try using Google tools. What country is the domain of the Internet article published on May 6, 2001, about poultry waste as a substitute for fishmeal? Also, append the number of pages of the article to your answer.", answer: "Iran16" },
@@ -109,18 +112,20 @@
     const liveAnswer = document.getElementById('liveAnswer');
     const liveMessage = document.getElementById('liveMessage');
     const restartBtn = document.getElementById('restartBtn');
+    const quitBtn = document.getElementById('quitBtn');
     const timerBar = document.getElementById('timerBar');
     const scoreDisplay = document.getElementById('scoreDisplay');
 
-    document.getElementById('answerForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const userAnswer = answerInput.value.trim();
-      if (userAnswer === '33') {
-        messageEl.textContent = 'Good job and good luck!';
-        continueBtn.classList.remove('hidden');
-      } else {
-        messageEl.textContent = 'Try again';
-        answerInput.value = '';
+    answerInput.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        const userAnswer = answerInput.value.trim();
+        if (userAnswer === '33') {
+          messageEl.textContent = 'Good job and good luck!';
+          continueBtn.classList.remove('hidden');
+        } else {
+          messageEl.textContent = 'Try again';
+          answerInput.value = '';
+        }
       }
     });
 
@@ -155,7 +160,7 @@
         updateTimerBar();
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
-          liveMessage.textContent = "Time's up! Moving to next question...";
+          liveMessage.textContent = 'Time\'s up! Moving to next question...';
           currentIndex++;
           if (currentIndex < questions.length) {
             setTimeout(renderQuestion, 2000);
@@ -171,29 +176,30 @@
       timerBar.style.width = percent + '%';
     }
 
-    document.getElementById('liveAnswerForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const userAnswer = liveAnswer.value.trim();
-      if (userAnswer === questions[currentIndex].answer) {
-        clearInterval(timerInterval);
-        let points = 0;
-        const elapsed = maxTime - timeLeft;
-        if (elapsed <= 300) points = 100;
-        else if (elapsed <= 600) points = 50;
-        else if (elapsed <= 900) points = 25;
-        else if (elapsed <= 1200) points = 7;
-        totalPoints += points;
+    liveAnswer.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        const userAnswer = liveAnswer.value.trim();
+        if (userAnswer === questions[currentIndex].answer) {
+          clearInterval(timerInterval);
+          let points = 0;
+          const elapsed = maxTime - timeLeft;
+          if (elapsed <= 300) points = 100;
+          else if (elapsed <= 600) points = 50;
+          else if (elapsed <= 900) points = 25;
+          else if (elapsed <= 1200) points = 7;
+          totalPoints += points;
 
-        liveMessage.textContent = `Good job. You earned ${points} points.`;
-        currentIndex++;
-        if (currentIndex < questions.length) {
-          setTimeout(renderQuestion, 1000);
+          liveMessage.textContent = `Good job. You earned ${points} points.`;
+          currentIndex++;
+          if (currentIndex < questions.length) {
+            setTimeout(renderQuestion, 1000);
+          } else {
+            endChallenge();
+          }
         } else {
-          endChallenge();
+          liveMessage.textContent = 'Try harder';
+          liveAnswer.value = '';
         }
-      } else {
-        liveMessage.textContent = 'Try harder';
-        liveAnswer.value = '';
       }
     });
 
@@ -208,6 +214,7 @@
     }
 
     restartBtn.addEventListener('click', resetChallenge);
+    quitBtn.addEventListener('click', quitChallenge);
 
     function resetChallenge() {
       clearInterval(timerInterval);
@@ -222,6 +229,16 @@
       continueBtn.classList.add('hidden');
       liveAnswer.classList.remove('hidden');
       restartBtn.classList.add('hidden');
+    }
+
+    function quitChallenge() {
+      clearInterval(timerInterval);
+      quizDiv.innerHTML = `
+        <h1>Challenge Terminated</h1>
+        <p>You earned ${totalPoints} points out of ${maxPoints} possible.</p>
+        <blockquote>"If you quit on the process, you are quitting on the result." — Idowu Koyenikan</blockquote>
+        <button onclick="resetChallenge()">Go to Start</button>
+      `;
     }
   </script>
 </body>
