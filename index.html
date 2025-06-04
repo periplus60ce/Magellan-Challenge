@@ -6,45 +6,56 @@
   <title>Magellan Research Challenge</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-  body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-    color: #2c1c0f;
-  }
-  .hidden {
-    display: none;
-  }
-  #message, #liveMessage {
-    margin-top: 10px;
-    font-weight: bold;
-  }
-  button {
-    margin-top: 10px;
-  }
-  #timerContainer {
-    width: 100%;
-    background-color: #ddd;
-    height: 20px;
-    margin-top: 10px;
-  }
-  #timerBar {
-    height: 20px;
-    background-color: #4caf50;
-    width: 100%;
-    transition: width 1s linear;
-  }
-</style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    #message, #liveMessage {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #timerContainer {
+      width: 100%;
+      background-color: #ddd;
+      height: 20px;
+      margin-top: 10px;
+    }
+    #timerBar {
+      height: 20px;
+      background-color: #4caf50;
+      width: 100%;
+      transition: width 1s linear;
+    }
+    #quitBtn {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+    }
+  </style>
 </head>
 <body>
   <div id="challenge">
     <h1>Magellan Research Challenge</h1>
     <p id="question">Test, test, test. How many letters are in Ukrainian alphabet?</p>
     <input type="text" id="answerInput" placeholder="Your answer here">
-    <div id="message"></div>
+    <button id="startSubmitBtn">SUBMIT</button>
+	<div id="message"></div>
     <button id="continueBtn" class="hidden">CLICK TO CONTINUE</button>
   </div>
 
@@ -59,6 +70,7 @@
     <p id="liveInstruction">Press "ENTER" to confirm your answer.</p>
     <p id="liveQuestion"></p>
     <input type="text" id="liveAnswer" placeholder="Your answer here">
+    <button id="submitBtn">SUBMIT</button>
     <div id="liveMessage"></div>
     <div id="timerContainer">
       <div id="timerBar"></div>
@@ -115,19 +127,18 @@
     const quitBtn = document.getElementById('quitBtn');
     const timerBar = document.getElementById('timerBar');
     const scoreDisplay = document.getElementById('scoreDisplay');
+    const submitBtn = document.getElementById('submitBtn');
 
-    answerInput.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
-        const userAnswer = answerInput.value.trim();
-        if (userAnswer === '33') {
-          messageEl.textContent = 'Good job and good luck!';
-          continueBtn.classList.remove('hidden');
-        } else {
-          messageEl.textContent = 'Try again';
-          answerInput.value = '';
-        }
-      }
-    });
+		document.getElementById('startSubmitBtn').addEventListener('click', function () {
+	  const userAnswer = answerInput.value.trim();
+	  if (userAnswer === '33') {
+		messageEl.textContent = 'Good job and good luck!';
+		continueBtn.classList.remove('hidden');
+	  } else {
+		messageEl.textContent = 'Try again';
+		answerInput.value = '';
+	  }
+	});
 
     continueBtn.addEventListener('click', () => {
       challengeDiv.classList.add('hidden');
@@ -176,37 +187,44 @@
       timerBar.style.width = percent + '%';
     }
 
+    function handleAnswerSubmission() {
+      const userAnswer = liveAnswer.value.trim();
+      if (userAnswer === questions[currentIndex].answer) {
+        clearInterval(timerInterval);
+        let points = 0;
+        const elapsed = maxTime - timeLeft;
+        if (elapsed <= 300) points = 100;
+        else if (elapsed <= 600) points = 50;
+        else if (elapsed <= 900) points = 25;
+        else if (elapsed <= 1200) points = 7;
+        totalPoints += points;
+
+        liveMessage.textContent = `Good job. You earned ${points} points.`;
+        currentIndex++;
+        if (currentIndex < questions.length) {
+          setTimeout(renderQuestion, 1000);
+        } else {
+          endChallenge();
+        }
+      } else {
+        liveMessage.textContent = 'Try harder';
+        liveAnswer.value = '';
+      }
+    }
+
     liveAnswer.addEventListener('keydown', function(event) {
       if (event.key === 'Enter') {
-        const userAnswer = liveAnswer.value.trim();
-        if (userAnswer === questions[currentIndex].answer) {
-          clearInterval(timerInterval);
-          let points = 0;
-          const elapsed = maxTime - timeLeft;
-          if (elapsed <= 300) points = 100;
-          else if (elapsed <= 600) points = 50;
-          else if (elapsed <= 900) points = 25;
-          else if (elapsed <= 1200) points = 7;
-          totalPoints += points;
-
-          liveMessage.textContent = `Good job. You earned ${points} points.`;
-          currentIndex++;
-          if (currentIndex < questions.length) {
-            setTimeout(renderQuestion, 1000);
-          } else {
-            endChallenge();
-          }
-        } else {
-          liveMessage.textContent = 'Try harder';
-          liveAnswer.value = '';
-        }
+        handleAnswerSubmission();
       }
     });
+
+    submitBtn.addEventListener('click', handleAnswerSubmission);
 
     function endChallenge() {
       setTimeout(() => {
         liveQuestion.textContent = 'Challenge Complete! Well done!';
         liveAnswer.classList.add('hidden');
+        submitBtn.classList.add('hidden');
         liveMessage.textContent = '';
         scoreDisplay.textContent = `You earned ${totalPoints} points out of ${maxPoints} possible.`;
         restartBtn.classList.remove('hidden');
@@ -228,6 +246,7 @@
       messageEl.textContent = '';
       continueBtn.classList.add('hidden');
       liveAnswer.classList.remove('hidden');
+      submitBtn.classList.remove('hidden');
       restartBtn.classList.add('hidden');
     }
 
