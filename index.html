@@ -61,7 +61,7 @@
 
   <div id="instructions" class="hidden">
     <h2>Instructions</h2>
-    <p>You will be presented with 22 questions. Use a variety of OSR tools and techniques to find the answers. Good luck!</p>
+    <p>You will be presented with 22 questions. Use a variety of OSR tools and techniques to find the answers.Good luck!</p>
     <button id="letsGoBtn">Let's go</button>
   </div>
 
@@ -253,7 +253,7 @@
     function quitChallenge() {
       clearInterval(timerInterval);
       quizDiv.innerHTML = `
-        <h1>Challenge Terminated</h1>
+        <h1>Challenge Terminated. Reload the page to do it again</h1>
         <p>You earned ${totalPoints} points out of ${maxPoints} possible.</p>
         <blockquote>"If you quit on the process, you are quitting on the result." — Idowu Koyenikan</blockquote>
         <button onclick="resetChallenge()">Go to Start</button>
