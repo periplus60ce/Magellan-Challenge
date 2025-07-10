@@ -108,7 +108,7 @@
     let currentIndex = -1;
     let timerInterval;
     let timeLeft;
-    const maxTime = 1200;
+    const maxTime = 2400;
     let totalPoints = 0;
     const maxPoints = questions.length * 100;
 
@@ -197,6 +197,7 @@
         else if (elapsed <= 600) points = 50;
         else if (elapsed <= 900) points = 25;
         else if (elapsed <= 1200) points = 7;
+	else if (elapsed <= 2400) points = 4;
         totalPoints += points;
 
         liveMessage.textContent = `Good job. You earned ${points} points.`;
