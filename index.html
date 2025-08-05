@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Magellan Research Challenge</title>
   <link rel="stylesheet" href="styles.css">
   <style>
@@ -47,96 +47,204 @@
       bottom: 20px;
       left: 20px;
     }
+    #languageToggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
   </style>
 </head>
 <body>
+  <button id="languageToggle">UKR</button>
+
   <div id="challenge">
-    <h1>Magellan Research Challenge</h1>
-    <p id="question">Test, test, test. How many letters are there in the Ukrainian alphabet?</p>
+    <h1 data-en="Magellan Research Challenge" data-uk="Дослідницький виклик Магеллана">Magellan Research Challenge</h1>
+    <p id="question" data-en="Test, test, test. How many letters are there in the Ukrainian alphabet?" data-uk="Тест, тест, тест. Скільки літер в українському алфавіті?">Test, test, test. How many letters are there in the Ukrainian alphabet?</p>
     <input type="text" id="answerInput" placeholder="Your answer here">
-    <button id="startSubmitBtn">SUBMIT</button>
-	<div id="message"></div>
-    <button id="continueBtn" class="hidden">CLICK TO CONTINUE</button>
+    <button id="startSubmitBtn" data-en="SUBMIT" data-uk="ВІДПРАВИТИ">SUBMIT</button>
+    <div id="message"></div>
+    <button id="continueBtn" class="hidden" data-en="CLICK TO CONTINUE" data-uk="НАТИСНІТЬ, ЩОБ ПРОДОВЖИТИ">CLICK TO CONTINUE</button>
   </div>
 
   <div id="instructions" class="hidden">
-    <h2>Instructions</h2>
-    <p>You will be presented with 22 questions. Use a variety of OSR tools and techniques to find the answers.Good luck!</p>
-    <button id="letsGoBtn">Let's go</button>
+    <h2 data-en="Instructions" data-uk="Інструкції">Instructions</h2>
+    <p id="instructionsText" data-en="You will be presented with 19 questions. Use a variety of OSR tools and techniques to find the answers. Good luck!" data-uk="Вам буде запропоновано 19 запитання. Використовуйте різноманітні інструменти OSR і техніки для знаходження відповідей. Удачі!">You will be presented with 22 questions. Use a variety of OSR tools and techniques to find the answers. Good luck!</p>
+    <button id="letsGoBtn" data-en="Let's go" data-uk="Поїхали">Let's go</button>
   </div>
-
+  
   <div id="quiz" class="hidden">
-    <h1>Magellan Challenge</h1>
-    <p id="liveInstruction">Press "ENTER" to confirm your answer.</p>
+    <h1 data-en="Magellan Challenge" data-uk="Виклик Магеллана">Magellan Challenge</h1>
+    <p id="liveInstruction" data-en="Press 'ENTER' to confirm your answer." data-uk="Натисніть 'ENTER', щоб підтвердити відповідь.">Press "ENTER" to confirm your answer.</p>
     <p id="liveQuestion"></p>
     <input type="text" id="liveAnswer" placeholder="Your answer here">
-    <button id="submitBtn">SUBMIT</button>
+    <button id="submitBtn" data-en="SUBMIT" data-uk="ВІДПРАВИТИ">SUBMIT</button>
+    <button id="skipBtn" data-en="SKIP" data-uk="ПРОПУСТИТИ">SKIP</button>
     <div id="liveMessage"></div>
-    <div id="timerContainer">
-      <div id="timerBar"></div>
-    </div>
+    <div id="timerContainer"><div id="timerBar"></div></div>
     <p id="scoreDisplay"></p>
-    <button id="restartBtn" class="hidden">Restart Challenge</button>
-    <button id="quitBtn">I quit</button>
+    <button id="restartBtn" class="hidden" data-en="Restart Challenge" data-uk="Почати заново">Restart Challenge</button>
+    
   </div>
 
   <script>
-    const questions = [
-      { question: "Refer to government databases (laws, reports, statistics) What number is stamped at the bottom left of the first page of a hyperlinked document in the section regarding wildcat dumping in Cochise County, AZ, code compliance?", answer: "030309993" },
-      { question: "Try using Google tools. What is the first name of the author of an excert published online on May 25, 2001, about an explosion in 1908? Also, append the number of pages of the online article to your answer (for example, name Igor and 12 pages make Igor12.", answer: "Wolfgang9" },
-      { question: "Search some academic papers (Google Scholar, ResearchGate). What is the country where the photograph was taken? Photograph #6 p.34. The Dragonflies of Europe by R.R. Askew (revised edition 2004).", answer: "Switzerland" },
-      { question: "Look in corporate records, official business registries, SEC filings. What is the first word of the previous legal name (starts with a “W”) of “Corporation X” in NC, USA? Prepend SOSID to your answer.", answer: "1899761Westinghouse" },
-      { question: "Leverage Geocode.xyz. Generate coordinates for Skole. Copy and paste them into the search bar of Google maps. Find the closest restaurant to the pin. The name is related to sheep. View the pictures. Look at the third bookshelf from the bottom. The fourth book on the right (it is navy blue). The answer is the country of origin of the author.", answer: "Argentina" },
-      { question: "Geospatial data (Goolgle Earth Pro, Google Maps, Mapillary). What word is written inside of the toilet of a hotel located 23.77 mi (38.26 km) SW away from 45R VL 92652 95877?", answer: "Taj" },
-      { question: "Geospatial data again (Google Lens, Chat GPT, Google Maps, Google Earth Pro Mapillary). Use the provided image to find your answer written on the red structure. To see the structure, you should be standing 241.18 ft (73.51 m) south of the image.", answer: "TELEPHONE" },
-      { question: "Now it is time for some Google “Dorking” and Boolean logic. Your answer is the last word of passage 18 on page 11. Find a pdf file that contains words: art, war, sun in its title on a Canadian website that contains any letter in front of the word “alberta” in its URL.", answer: "battle" },
-      { question: "Explore Google trends. Your answer is the name of a city in Ireland that had the highest Google shopping interest in the most popular item among computers and electronics in 2024. Append the lowest score of interest overtime in April 2024, in that city to your answer.", answer: "Balbriggan25" },
-      { question: "Let’s check websites for malicious code (“https://virustotal.com”). Your answer is the type of cyberthreat that the website “https://www.fantasticfilms.ru” present according to BitDefender.", answer: "Phishing" },
-      { question: "Apply the same concept as before “https://www.gncr.org”. Your answer is the cyberthreat label according to alphaMountain.ai", answer: "Suspicious" },
-      { question: "Apply the same concept to “https://www.purplehoodie.com”. Your answer is the cyberthreat label according to Fortinet.", answer: "Malware" },
-      { question: "Let’s venture into dnsdumpster.com. When inspecting “bbc.com”, look for the ASN name of the subdomain IP 198.51.44.73", answer: "NSONE" },
-      { question: "Still in the dnsdumpster. What is the 12-character-long string in the URL of IP 45.121.163.23 in the MX records that are used to direct email traffic to the correct mail server for the domain “xosodaiphat.com”?", answer: "c5fd2b0b4586" },
-      { question: "Same place. What is the verification token for “jamf.com” found when inspecting “trustpilot.com”?", answer: "hCZILKggaY23aId4VBfmVA" },
-      { question: "Still there. While inspecting “ox.ac.uk”, specifically TXT records, what is the domain verification token for OpenAI? Don’t include “dv-“. Append it to the last word after the URL to a website under the image.", answer: "projectFrXjlS30zrnR8T3D1ktwxud7" },
-      { question: "Finally, out and right into “Urlscan.io”. What month was the TLS certificate for “wadefamilytree.org” issue?", answer: "August" },
-      { question: "Keep exploring “Urlscan.io”. What is the name of the city where the main IP for “ukrpravda.com.ua” is located?", answer: "Falkenstein" },
-      { question: "Almost there. X.com geo search. The information you need was posted within 5-mile radius of Snorralaug Reykholt, Iceland on April 3, 2022. What brand is the rowing machine in the video with the dance?", answer: "StairMaster" }
-    ];
-
     let currentIndex = -1;
-    let timerInterval;
-    let timeLeft;
-    const maxTime = 2400;
-    let totalPoints = 0;
-    const maxPoints = questions.length * 100;
+    let totalScore = 0;
+    let lang = 'en';
+    let randomizedQuestions = [];
 
-    const challengeDiv = document.getElementById('challenge');
-    const questionEl = document.getElementById('question');
-    const answerInput = document.getElementById('answerInput');
-    const messageEl = document.getElementById('message');
-    const continueBtn = document.getElementById('continueBtn');
-    const instructionsDiv = document.getElementById('instructions');
-    const letsGoBtn = document.getElementById('letsGoBtn');
-    const quizDiv = document.getElementById('quiz');
     const liveQuestion = document.getElementById('liveQuestion');
     const liveAnswer = document.getElementById('liveAnswer');
     const liveMessage = document.getElementById('liveMessage');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const continueBtn = document.getElementById('continueBtn');
+    const instructionsDiv = document.getElementById('instructions');
+    const challengeDiv = document.getElementById('challenge');
+    const letsGoBtn = document.getElementById('letsGoBtn');
+    const quizDiv = document.getElementById('quiz');
+    const submitBtn = document.getElementById('submitBtn');
+    const skipBtn = document.getElementById('skipBtn');
     const restartBtn = document.getElementById('restartBtn');
     const quitBtn = document.getElementById('quitBtn');
-    const timerBar = document.getElementById('timerBar');
-    const scoreDisplay = document.getElementById('scoreDisplay');
-    const submitBtn = document.getElementById('submitBtn');
 
-		document.getElementById('startSubmitBtn').addEventListener('click', function () {
-	  const userAnswer = answerInput.value.trim();
-	  if (userAnswer === '33') {
-		messageEl.textContent = 'Good job and good luck!';
-		continueBtn.classList.remove('hidden');
-	  } else {
-		messageEl.textContent = 'Try again';
-		answerInput.value = '';
-	  }
-	});
+    const questions = [
+      {
+    en: "Refer to government databases (laws, reports, statistics) What number is stamped at the bottom left of the first page of a hyperlinked document in the section regarding wildcat dumping in Cochise County, AZ, code compliance?",
+    uk: "Зверніться до державних баз даних (закони, звіти, статистика). Який номер стоїть у нижньому лівому куті першої сторінки гіперпосилання у розділі про незаконні сміттєзвалища в окрузі Кочіс, штат Арізона (дотримання норм)?",
+    answer: "030309993"
+  },
+  {
+    en: "Try using Google tools. What is the first name of the author of an excert published online on May 25, 2001, about an explosion in 1908? Also, append the number of pages of the online article to your answer (for example, name Igor and 12 pages make Igor12.",
+    uk: "Спробуйте інструменти Google. Яке ім'я автора уривка, опублікованого онлайн 25 травня 2001 року про вибух 1908 року? Додайте кількість сторінок цієї статті до імені (наприклад: Igor + 12 = Igor12).",
+    answer: "Wolfgang9"
+  },
+  {
+    en: "Search some academic papers (Google Scholar, ResearchGate). What is the country where the photograph was taken? Photograph #6 p.34. The Dragonflies of Europe by R.R. Askew (revised edition 2004).",
+    uk: "Знайдіть академічну статтю (Google Scholar, ResearchGate). У якій країні було зроблено фотографію №6 на стор. 34 у книзі \"The Dragonflies of Europe\" Р.Р. Аскʼю (видання 2004)?",
+    answer: "Switzerland"
+  },
+  {
+    en: "Look in corporate records, official business registries, SEC filings. What is the first word of the previous legal name (starts with a “W”) of “Corporation X” in NC, USA? Prepend SOSID to your answer.",
+    uk: "Знайдіть у корпоративних реєстрах, офіційних бізнес-реєстрах, звітах SEC. Яке перше слово попередньої юридичної назви (починається з 'W') компанії “Corporation X” у Північній Кароліні, США? Додайте SOSID на початку.",
+    answer: "1899761Westinghouse"
+  },
+  {
+    en: "Leverage Geocode.xyz. Generate coordinates for Skole. Copy and paste them into the search bar of Google maps. Find the closest restaurant to the pin. The name is related to sheep. View the pictures. Look at the third bookshelf from the bottom. The fourth book on the right (it is navy blue). The answer is the country of origin of the author.",
+    uk: "Скористайтеся Geocode.xyz. Згенеруйте координати для Сколе. Скопіюйте та вставте їх у пошук Google Maps. Знайдіть найближчий ресторан — назва пов'язана з вівцями. Подивіться на фотографії. Третя полиця знизу, четверта книга праворуч (темно-синя). Вкажіть країну походження автора книги.",
+    answer: "Argentina"
+  },
+  {
+    en: "Geospatial data (Goolgle Earth Pro, Google Maps, Mapillary). What word is written inside of the toilet of a hotel located 23.77 mi (38.26 km) SW away from 45R VL 92652 95877?",
+    uk: "Геопросторові дані (Google Earth Pro, Google Maps, Mapillary). Яке слово написано всередині туалету готелю, що розташований за 38.26 км на південний захід від 45R VL 92652 95877?",
+    answer: "Taj"
+  },
+  {
+    en: "Geospatial data again (Google Lens, Chat GPT, Google Maps, Google Earth Pro Mapillary). Use the provided image to find your answer written on the red structure. To see the structure, you should be standing 241.18 ft (73.51 m) south of the image.",
+    uk: "Знову геопросторові дані (Google Lens, Chat GPT, Google Maps, Google Earth Pro, Mapillary). Використайте надане зображення, щоб побачити напис на червоній конструкції. Щоб побачити її, станьте на 73.51 м південніше зображення.",
+    answer: "TELEPHONE"
+  },
+  {
+    en: "Now it is time for some Google “Dorking” and Boolean logic. Your answer is the last word of passage 18 on page 11. Find a pdf file that contains words: art, war, sun in its title on a Canadian website that contains any letter in front of the word “alberta” in its URL.",
+    uk: "Спробуйте Google “Dorking” та булеву логіку. Знайдіть PDF-файл з назвою, що містить слова: art, war, sun на канадському сайті, в URL якого є будь-яка літера перед словом 'alberta'. Ваша відповідь — останнє слово в уривку 18 на сторінці 11.",
+    answer: "battle"
+  },
+  {
+    en: "Explore Google trends. Your answer is the name of a city in Ireland that had the highest Google shopping interest in the most popular item among computers and electronics in 2024. Append the lowest score of interest overtime in April 2024, in that city to your answer.",
+    uk: "Перевірте Google Trends. Ваша відповідь — назва міста в Ірландії, яке у 2024 році показало найбільший інтерес до найпопулярнішого товару в категорії 'комп’ютери та електроніка'. Додайте найнижчий показник за квітень 2024 року до назви міста.",
+    answer: "Balbriggan25"
+  },
+  {
+    en: "Let’s check websites for malicious code (“https://virustotal.com”). Your answer is the type of cyberthreat that the website “https://www.fantasticfilms.ru” present according to BitDefender.",
+    uk: "Перевіримо сайти на наявність шкідливого коду (https://virustotal.com). Ваша відповідь — тип кіберзагрози, яку виявив BitDefender на сайті “https://www.fantasticfilms.ru”.",
+    answer: "Phishing"
+  },
+  {
+    en: "Apply the same concept as before “https://www.gncr.org”. Your answer is the cyberthreat label according to alphaMountain.ai",
+    uk: "Використайте ту саму перевірку для сайту “https://www.gncr.org”. Ваша відповідь — мітка загрози згідно з alphaMountain.ai",
+    answer: "Suspicious"
+  },
+  {
+    en: "Apply the same concept to “https://www.purplehoodie.com”. Your answer is the cyberthreat label according to Fortinet.",
+    uk: "Аналогічно для сайту “https://www.purplehoodie.com”. Ваша відповідь — мітка загрози згідно з Fortinet.",
+    answer: "Malware"
+  },
+  {
+    en: "Let’s venture into dnsdumpster.com. When inspecting “bbc.com”, look for the ASN name of the subdomain IP 198.51.44.73",
+    uk: "Перейдіть на dnsdumpster.com. Перевірте “bbc.com” і знайдіть ASN-ім’я піддомену з IP-адресою 198.51.44.73",
+    answer: "NSONE"
+  },
+  {
+    en: "Still in the dnsdumpster. What is the 12-character-long string in the URL of IP 45.121.163.23 in the MX records that are used to direct email traffic to the correct mail server for the domain “xosodaiphat.com”?",
+    uk: "Все ще на dnsdumpster. Який 12-символьний рядок знаходиться в URL-адресі IP 45.121.163.23 в MX-записах домену “xosodaiphat.com”?",
+    answer: "c5fd2b0b4586"
+  },
+  {
+    en: "Same place. What is the verification token for “jamf.com” found when inspecting “trustpilot.com”?",
+    uk: "На тому ж ресурсі. Який токен підтвердження для “jamf.com” знайдено при аналізі “trustpilot.com”?",
+    answer: "hCZILKggaY23aId4VBfmVA"
+  },
+  {
+    en: "Still there. While inspecting “ox.ac.uk”, specifically TXT records, what is the domain verification token for OpenAI? Don’t include “dv-“. Append it to the last word after the URL to a website under the image.",
+    uk: "Все ще там. Перевіряючи TXT-записи домену “ox.ac.uk”, знайдіть токен перевірки для OpenAI (без “dv-”) і додайте його до останнього слова після URL під зображенням.",
+    answer: "projectFrXjlS30zrnR8T3D1ktwxud7"
+  },
+  {
+    en: "Finally, out and right into “Urlscan.io”. What month was the TLS certificate for “wadefamilytree.org” issue?",
+    uk: "І нарешті — на сайт “Urlscan.io”. В якому місяці було видано TLS-сертифікат для “wadefamilytree.org”?",
+    answer: "August"
+  },
+  {
+    en: "Keep exploring “Urlscan.io”. What is the name of the city where the main IP for “ukrpravda.com.ua” is located?",
+    uk: "Продовжіть дослідження на “Urlscan.io”. У якому місті знаходиться основна IP-адреса для сайту “ukrpravda.com.ua”?",
+    answer: "Falkenstein"
+  },
+  {
+    en: "Almost there. X.com geo search. The information you need was posted within 5-mile radius of Snorralaug Reykholt, Iceland on April 3, 2022. What brand is the rowing machine in the video with the dance?",
+    uk: "Майже закінчили. Геопошук на X.com. Інформацію опубліковано в радіусі 5 миль від Snorralaug Reykholt, Ісландія, 3 квітня 2022 року. Який бренд веслового тренажера показано у відео з танцем?",
+    answer: "StairMaster"
+  }
+    ];
+
+    // Utility: Fisher–Yates shuffle
+    function shuffle(array) {
+      let current = array.length, temp, random;
+      while (current) {
+        random = Math.floor(Math.random() * current--);
+        temp = array[current];
+        array[current] = array[random];
+        array[random] = temp;
+      }
+      return array;
+    }
+
+    // Language toggle
+    function updateLanguage() {
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.textContent = el.getAttribute(`data-${lang}`);
+      });
+      if (currentIndex >= 0 && currentIndex < randomizedQuestions.length) {
+        liveQuestion.textContent = randomizedQuestions[currentIndex][lang];
+      }
+    }
+
+    document.getElementById('languageToggle').addEventListener('click', () => {
+      lang = lang === 'en' ? 'uk' : 'en';
+      document.getElementById('languageToggle').textContent = lang === 'en' ? 'UKR' : 'ENG';
+      updateLanguage();
+    });
+
+    updateLanguage();
+
+    // Welcome check
+    document.getElementById('startSubmitBtn').addEventListener('click', () => {
+      const answer = document.getElementById('answerInput').value.trim();
+      const message = document.getElementById('message');
+      if (answer === '33') {
+        message.textContent = lang === 'en' ? 'Correct. Let\'s continue.' : 'Правильно. Переходимо далі.';
+        continueBtn.classList.remove('hidden');
+      } else {
+        message.textContent = lang === 'en' ? 'Try again.' : 'Спробуйте ще раз.';
+      }
+    });
 
     continueBtn.addEventListener('click', () => {
       challengeDiv.classList.add('hidden');
@@ -147,117 +255,112 @@
       instructionsDiv.classList.add('hidden');
       quizDiv.classList.remove('hidden');
       currentIndex = 0;
+      totalScore = 0;
+      randomizedQuestions = shuffle([...questions]);
       renderQuestion();
     });
 
+    submitBtn.addEventListener('click', checkAnswer);
+    skipBtn.addEventListener('click', skipQuestion);
+    liveAnswer.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkAnswer();
+    });
+
     function renderQuestion() {
-      if (currentIndex >= 0 && currentIndex < questions.length) {
-        liveQuestion.textContent = questions[currentIndex].question;
+      if (currentIndex >= 0 && currentIndex < randomizedQuestions.length) {
+        liveQuestion.textContent = randomizedQuestions[currentIndex][lang];
         liveAnswer.value = '';
         liveMessage.textContent = '';
         liveAnswer.focus();
-        startTimer();
       }
     }
 
-    function startTimer() {
-      clearInterval(timerInterval);
-      timeLeft = maxTime;
-      updateTimerBar();
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerBar();
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          liveMessage.textContent = 'Time\'s up! Moving to next question...';
-          currentIndex++;
-          if (currentIndex < questions.length) {
-            setTimeout(renderQuestion, 2000);
-          } else {
-            endChallenge();
-          }
-        }
-      }, 1000);
-    }
-
-    function updateTimerBar() {
-      const percent = (timeLeft / maxTime) * 100;
-      timerBar.style.width = percent + '%';
-    }
-
-    function handleAnswerSubmission() {
+    function checkAnswer() {
       const userAnswer = liveAnswer.value.trim();
-      if (userAnswer === questions[currentIndex].answer) {
-        clearInterval(timerInterval);
-        let points = 0;
-        const elapsed = maxTime - timeLeft;
-        if (elapsed <= 300) points = 100;
-        else if (elapsed <= 600) points = 50;
-        else if (elapsed <= 900) points = 25;
-        else if (elapsed <= 1200) points = 7;
-	else if (elapsed <= 2400) points = 4;
-        totalPoints += points;
+      const correctAnswer = randomizedQuestions[currentIndex].answer;
 
-        liveMessage.textContent = `Good job. You earned ${points} points.`;
-        currentIndex++;
-        if (currentIndex < questions.length) {
-          setTimeout(renderQuestion, 1000);
-        } else {
-          endChallenge();
-        }
+      if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+        liveMessage.textContent = lang === 'en' ? 'Correct!' : 'Правильно!';
+        totalScore++;
       } else {
-        liveMessage.textContent = 'Try harder';
-        liveAnswer.value = '';
+        liveMessage.textContent = lang === 'en' ? 'Incorrect. Try the next one.' : 'Неправильно. Спробуйте наступне.';
+      }
+
+      moveToNextQuestion();
+    }
+
+    function skipQuestion() {
+      liveMessage.textContent = lang === 'en' ? 'Skipped.' : 'Пропущено.';
+      moveToNextQuestion();
+    }
+
+    function moveToNextQuestion() {
+      currentIndex++;
+      if (currentIndex < randomizedQuestions.length) {
+        setTimeout(renderQuestion, 1000);
+      } else {
+        setTimeout(showResults, 1000);
       }
     }
 
-    liveAnswer.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
-        handleAnswerSubmission();
-      }
-    });
-
-    submitBtn.addEventListener('click', handleAnswerSubmission);
-
-    function endChallenge() {
-      setTimeout(() => {
-        liveQuestion.textContent = 'Challenge Complete! Well done!';
-        liveAnswer.classList.add('hidden');
-        submitBtn.classList.add('hidden');
-        liveMessage.textContent = '';
-        scoreDisplay.textContent = `You earned ${totalPoints} points out of ${maxPoints} possible.`;
-        restartBtn.classList.remove('hidden');
-      }, 2000);
+    function showResults() {
+      liveQuestion.textContent = lang === 'en' ? 'Challenge Complete! Well done!' : 'Виклик завершено! Чудова робота!';
+      liveAnswer.classList.add('hidden');
+      submitBtn.classList.add('hidden');
+      skipBtn.classList.add('hidden');
+      scoreDisplay.textContent = `${lang === 'en' ? 'Score' : 'Результат'}: ${totalScore}/${randomizedQuestions.length}`;
+      restartBtn.classList.remove('hidden');
     }
 
-    restartBtn.addEventListener('click', resetChallenge);
+	restartBtn.addEventListener('click', () => {
+	  currentIndex = 0;
+	  totalScore = 0;
+	  randomizedQuestions = shuffle([...questions]);
+	  updateLanguage();
+	  quizDiv.classList.remove('hidden');
+	  restartBtn.classList.add('hidden');
+	  liveAnswer.classList.remove('hidden');
+	  submitBtn.classList.remove('hidden');
+	  skipBtn.classList.remove('hidden');
+	  scoreDisplay.textContent = '';
+	  renderQuestion();
+	});
     quitBtn.addEventListener('click', quitChallenge);
+		function quitChallenge() {
+	  // Stop any timers if present
+	  if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
 
-    function resetChallenge() {
-      clearInterval(timerInterval);
-      currentIndex = -1;
-      totalPoints = 0;
-      scoreDisplay.textContent = '';
-      challengeDiv.classList.remove('hidden');
-      instructionsDiv.classList.add('hidden');
-      quizDiv.classList.add('hidden');
-      answerInput.value = '';
-      messageEl.textContent = '';
-      continueBtn.classList.add('hidden');
-      liveAnswer.classList.remove('hidden');
-      submitBtn.classList.remove('hidden');
-      restartBtn.classList.add('hidden');
-    }
+	  // Replace quiz UI with a bilingual exit screen
+	  quizDiv.innerHTML = `
+		<section style="
+		  background-color: rgba(15, 23, 42, 0.85);
+		  padding: 2rem;
+		  border-radius: 12px;
+		  max-width: 800px;
+		  margin: 2rem auto;
+		  text-align: center;
+		  color: #f8fafc;
+		">
+		  <h1>${lang === 'en' ? 'Challenge Terminated' : 'Виклик завершено'}</h1>
+		  <p>
+			${lang === 'en'
+			  ? `You earned ${totalScore} point${totalScore === 1 ? '' : 's'} out of ${randomizedQuestions.length}.`
+			  : `Ви отримали ${totalScore} бал${totalScore === 1 ? '' : 'ів'} з ${randomizedQuestions.length}.`}
+		  </p>
+		  <blockquote style="font-style: italic; margin: 20px 20px; color: #facc15;">
+			"${lang === 'en'
+			  ? 'If you quit on the process, you are quitting on the result.'
+			  : 'Якщо ви здаєтесь під час процесу — ви відмовляєтесь від результату.'}"
+			— Idowu Koyenikan
+		  </blockquote>
+		  <button onclick="location.reload()">
+			${lang === 'en' ? 'Go to Start' : 'Повернутися на початок'}
+		  </button>
+		</section>
+	  `;
+	}
 
-    function quitChallenge() {
-      clearInterval(timerInterval);
-      quizDiv.innerHTML = `
-        <h1>Challenge Terminated. Reload the page to do it again</h1>
-        <p>You earned ${totalPoints} points out of ${maxPoints} possible.</p>
-        <blockquote>"If you quit on the process, you are quitting on the result." — Idowu Koyenikan</blockquote>
-        <button onclick="resetChallenge()">Go to Start</button>
-      `;
-    }
   </script>
+  <button id="quitBtn">I quit</button>
 </body>
 </html>
