@@ -71,7 +71,7 @@
     <p id="instructionsText" data-en="You will be presented with 19 questions. Use a variety of OSR tools and techniques to find the answers. Good luck!" data-uk="Вам буде запропоновано 19 запитання. Використовуйте різноманітні інструменти OSR і техніки для знаходження відповідей. Удачі!">You will be presented with 22 questions. Use a variety of OSR tools and techniques to find the answers. Good luck!</p>
     <button id="letsGoBtn" data-en="Let's go" data-uk="Поїхали">Let's go</button>
   </div>
-  
+
   <div id="quiz" class="hidden">
     <h1 data-en="Magellan Challenge" data-uk="Виклик Магеллана">Magellan Challenge</h1>
     <p id="liveInstruction" data-en="Press 'ENTER' to confirm your answer." data-uk="Натисніть 'ENTER', щоб підтвердити відповідь.">Press "ENTER" to confirm your answer.</p>
@@ -83,14 +83,15 @@
     <div id="timerContainer"><div id="timerBar"></div></div>
     <p id="scoreDisplay"></p>
     <button id="restartBtn" class="hidden" data-en="Restart Challenge" data-uk="Почати заново">Restart Challenge</button>
-    
   </div>
+
   <button id="quitBtn" data-en="I quit" data-uk="Я здаюся">I quit</button>
+
   <script>
-    let currentIndex = -1;
     let totalScore = 0;
     let lang = 'en';
-    let randomizedQuestions = [];
+    let remainingQuestions = [];
+    let usedQuestions = [];
 
     const liveQuestion = document.getElementById('liveQuestion');
     const liveAnswer = document.getElementById('liveAnswer');
@@ -158,13 +159,13 @@
     answer: "Phishing"
   },
   {
-    en: "Apply the same concept as before “https://www.gncr.org”. Your answer is the cyberthreat label according to alphaMountain.ai",
-    uk: "Використайте ту саму перевірку для сайту “https://www.gncr.org”. Ваша відповідь — мітка загрози згідно з alphaMountain.ai",
+    en: "Let’s check websites for malicious code (“https://virustotal.com”). Your answer is the cyberthreat label for the website “https://www.gncr.org” according to alphaMountain.ai",
+    uk: "Перевіримо сайти на наявність шкідливого коду (“https://virustotal.com”). Ваша відповідь — мітка загрози згідно з alphaMountain.ai для веб-сторінки “https://www.gncr.org",
     answer: "Suspicious"
   },
   {
-    en: "Apply the same concept to “https://www.purplehoodie.com”. Your answer is the cyberthreat label according to Fortinet.",
-    uk: "Аналогічно для сайту “https://www.purplehoodie.com”. Ваша відповідь — мітка загрози згідно з Fortinet.",
+    en: "Let’s check websites for malicious code (“https://virustotal.com”). Your answer is the cyberthreat label for the website “https://www.purplehoodie.com” according to Fortinet.",
+    uk: "Перевіримо сайти на наявність шкідливого коду (“https://virustotal.com”). Ваша відповідь — мітка загрози для веб-сторінки “https://www.purplehoodie.com” згідно з Fortinet.",
     answer: "Malware"
   },
   {
@@ -173,23 +174,23 @@
     answer: "NSONE"
   },
   {
-    en: "Still in the dnsdumpster. What is the 12-character-long string in the URL of IP 45.121.163.23 in the MX records that are used to direct email traffic to the correct mail server for the domain “xosodaiphat.com”?",
-    uk: "Все ще на dnsdumpster. Який 12-символьний рядок знаходиться в URL-адресі IP 45.121.163.23 в MX-записах домену “xosodaiphat.com”?",
+    en: "Let’s venture into dnsdumpster. What is the 12-character-long string in the URL of IP 45.121.163.23 in the MX records that are used to direct email traffic to the correct mail server for the domain “xosodaiphat.com”?",
+    uk: "Перейдіть на dnsdumpster. Який 12-символьний рядок знаходиться в URL-адресі IP 45.121.163.23 в MX-записах домену “xosodaiphat.com”?",
     answer: "c5fd2b0b4586"
   },
   {
-    en: "Same place. What is the verification token for “jamf.com” found when inspecting “trustpilot.com”?",
-    uk: "На тому ж ресурсі. Який токен підтвердження для “jamf.com” знайдено при аналізі “trustpilot.com”?",
+    en: "Let’s venture into dnsdumpster. What is the verification token for “jamf.com” found when inspecting “trustpilot.com”?",
+    uk: "Перейдіть на dnsdumpster. Який токен підтвердження для “jamf.com” знайдено при аналізі “trustpilot.com”?",
     answer: "hCZILKggaY23aId4VBfmVA"
   },
   {
-    en: "Still there. While inspecting “ox.ac.uk”, specifically TXT records, what is the domain verification token for OpenAI? Don’t include “dv-“. Append it to the last word after the URL to a website under the image.",
-    uk: "Все ще там. Перевіряючи TXT-записи домену “ox.ac.uk”, знайдіть токен перевірки для OpenAI (без “dv-”) і додайте його до останнього слова після URL під зображенням.",
+    en: "Let’s venture into dnsdumpster. While inspecting “ox.ac.uk”, specifically TXT records, what is the domain verification token for OpenAI? Don’t include “dv-“. Append it to the last word after the URL to a website under the image.",
+    uk: "Перейдіть на dnsdumpster. Перевіряючи TXT-записи домену “ox.ac.uk”, знайдіть токен перевірки для OpenAI (без “dv-”) і додайте його до останнього слова після URL під зображенням.",
     answer: "projectFrXjlS30zrnR8T3D1ktwxud7"
   },
   {
-    en: "Finally, out and right into “Urlscan.io”. What month was the TLS certificate for “wadefamilytree.org” issue?",
-    uk: "І нарешті — на сайт “Urlscan.io”. В якому місяці було видано TLS-сертифікат для “wadefamilytree.org”?",
+    en: "Go to “Urlscan.io”. What month was the TLS certificate for “wadefamilytree.org” issue?",
+    uk: "Зайдіть на сайт “Urlscan.io”. В якому місяці було видано TLS-сертифікат для “wadefamilytree.org”?",
     answer: "August"
   },
   {
@@ -198,13 +199,12 @@
     answer: "Falkenstein"
   },
   {
-    en: "Almost there. X.com geo search. The information you need was posted within 5-mile radius of Snorralaug Reykholt, Iceland on April 3, 2022. What brand is the rowing machine in the video with the dance?",
-    uk: "Майже закінчили. Геопошук на X.com. Інформацію опубліковано в радіусі 5 миль від Snorralaug Reykholt, Ісландія, 3 квітня 2022 року. Який бренд веслового тренажера показано у відео з танцем?",
+    en: "On X.com geo search. The information you need was posted within 5-mile radius of Snorralaug Reykholt, Iceland on April 3, 2022. What brand is the rowing machine in the video with the dance?",
+    uk: "Геопошук на X.com. Інформацію опубліковано в радіусі 5 миль від Snorralaug Reykholt, Ісландія, 3 квітня 2022 року. Який бренд веслового тренажера показано у відео з танцем?",
     answer: "StairMaster"
   }
     ];
 
-    // Utility: Fisher–Yates shuffle
     function shuffle(array) {
       let current = array.length, temp, random;
       while (current) {
@@ -216,13 +216,13 @@
       return array;
     }
 
-    // Language toggle
     function updateLanguage() {
       document.querySelectorAll('[data-en]').forEach(el => {
         el.textContent = el.getAttribute(`data-${lang}`);
       });
-      if (currentIndex >= 0 && currentIndex < randomizedQuestions.length) {
-        liveQuestion.textContent = randomizedQuestions[currentIndex][lang];
+      if (liveQuestion.textContent && liveQuestion.dataset.correctAnswer) {
+        const currentQ = usedQuestions[usedQuestions.length - 1];
+        if (currentQ) liveQuestion.textContent = currentQ[lang];
       }
     }
 
@@ -232,9 +232,6 @@
       updateLanguage();
     });
 
-    updateLanguage();
-
-    // Welcome check
     document.getElementById('startSubmitBtn').addEventListener('click', () => {
       const answer = document.getElementById('answerInput').value.trim();
       const message = document.getElementById('message');
@@ -254,30 +251,34 @@
     letsGoBtn.addEventListener('click', () => {
       instructionsDiv.classList.add('hidden');
       quizDiv.classList.remove('hidden');
-      currentIndex = 0;
       totalScore = 0;
-      randomizedQuestions = shuffle([...questions]);
-      renderQuestion();
+      usedQuestions = [];
+      remainingQuestions = shuffle([...questions]);
+      renderRandomQuestion();
     });
 
-    submitBtn.addEventListener('click', checkAnswer);
-    skipBtn.addEventListener('click', skipQuestion);
-    liveAnswer.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') checkAnswer();
-    });
-
-    function renderQuestion() {
-      if (currentIndex >= 0 && currentIndex < randomizedQuestions.length) {
-        liveQuestion.textContent = randomizedQuestions[currentIndex][lang];
-        liveAnswer.value = '';
-        liveMessage.textContent = '';
-        liveAnswer.focus();
+    function renderRandomQuestion() {
+      if (remainingQuestions.length === 0) {
+        showResults();
+        return;
       }
+
+      const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+      const q = remainingQuestions[randomIndex];
+
+      usedQuestions.push(q);
+      remainingQuestions.splice(randomIndex, 1);
+
+      liveQuestion.textContent = q[lang];
+      liveQuestion.dataset.correctAnswer = q.answer;
+      liveAnswer.value = '';
+      liveMessage.textContent = '';
+      liveAnswer.focus();
     }
 
     function checkAnswer() {
       const userAnswer = liveAnswer.value.trim();
-      const correctAnswer = randomizedQuestions[currentIndex].answer;
+      const correctAnswer = liveQuestion.dataset.correctAnswer;
 
       if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
         liveMessage.textContent = lang === 'en' ? 'Correct!' : 'Правильно!';
@@ -286,21 +287,12 @@
         liveMessage.textContent = lang === 'en' ? 'Incorrect. Try the next one.' : 'Неправильно. Спробуйте наступне.';
       }
 
-      moveToNextQuestion();
+      setTimeout(renderRandomQuestion, 1000);
     }
 
     function skipQuestion() {
       liveMessage.textContent = lang === 'en' ? 'Skipped.' : 'Пропущено.';
-      moveToNextQuestion();
-    }
-
-    function moveToNextQuestion() {
-      currentIndex++;
-      if (currentIndex < randomizedQuestions.length) {
-        setTimeout(renderQuestion, 1000);
-      } else {
-        setTimeout(showResults, 1000);
-      }
+      setTimeout(renderRandomQuestion, 1000);
     }
 
     function showResults() {
@@ -308,59 +300,62 @@
       liveAnswer.classList.add('hidden');
       submitBtn.classList.add('hidden');
       skipBtn.classList.add('hidden');
-      scoreDisplay.textContent = `${lang === 'en' ? 'Score' : 'Результат'}: ${totalScore}/${randomizedQuestions.length}`;
+      scoreDisplay.textContent = `${lang === 'en' ? 'Score' : 'Результат'}: ${totalScore}/${questions.length}`;
       restartBtn.classList.remove('hidden');
     }
 
-	restartBtn.addEventListener('click', () => {
-	  currentIndex = 0;
-	  totalScore = 0;
-	  randomizedQuestions = shuffle([...questions]);
-	  updateLanguage();
-	  quizDiv.classList.remove('hidden');
-	  restartBtn.classList.add('hidden');
-	  liveAnswer.classList.remove('hidden');
-	  submitBtn.classList.remove('hidden');
-	  skipBtn.classList.remove('hidden');
-	  scoreDisplay.textContent = '';
-	  renderQuestion();
-	});
+    submitBtn.addEventListener('click', checkAnswer);
+    skipBtn.addEventListener('click', skipQuestion);
+    liveAnswer.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkAnswer();
+    });
+
+    restartBtn.addEventListener('click', () => {
+      totalScore = 0;
+      usedQuestions = [];
+      remainingQuestions = shuffle([...questions]);
+      updateLanguage();
+      quizDiv.classList.remove('hidden');
+      restartBtn.classList.add('hidden');
+      liveAnswer.classList.remove('hidden');
+      submitBtn.classList.remove('hidden');
+      skipBtn.classList.remove('hidden');
+      scoreDisplay.textContent = '';
+      renderRandomQuestion();
+    });
+
     quitBtn.addEventListener('click', quitChallenge);
-		function quitChallenge() {
-	  // Stop any timers if present
-	  if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
 
-	  // Replace quiz UI with a bilingual exit screen
-	  quizDiv.innerHTML = `
-		<section style="
-		  background-color: rgba(15, 23, 42, 0.85);
-		  padding: 2rem;
-		  border-radius: 12px;
-		  max-width: 800px;
-		  margin: 2rem auto;
-		  text-align: center;
-		  color: #f8fafc;
-		">
-		  <h1>${lang === 'en' ? 'Challenge Terminated' : 'Виклик завершено'}</h1>
-		  <p>
-			${lang === 'en'
-			  ? `You earned ${totalScore} point${totalScore === 1 ? '' : 's'} out of ${randomizedQuestions.length}.`
-			  : `Ви отримали ${totalScore} бал${totalScore === 1 ? '' : 'ів'} з ${randomizedQuestions.length}.`}
-		  </p>
-		  <blockquote style="font-style: italic; margin: 20px 20px; color: #facc15;">
-			"${lang === 'en'
-			  ? 'If you quit on the process, you are quitting on the result.'
-			  : 'Якщо ви здаєтесь під час процесу — ви відмовляєтесь від результату.'}"
-			— Idowu Koyenikan
-		  </blockquote>
-		  <button onclick="location.reload()">
-			${lang === 'en' ? 'Go to Start' : 'Повернутися на початок'}
-		  </button>
-		</section>
-	  `;
-	}
-
+    function quitChallenge() {
+      if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+      quizDiv.innerHTML = `
+        <section style="
+          background-color: rgba(15, 23, 42, 0.85);
+          padding: 2rem;
+          border-radius: 12px;
+          max-width: 800px;
+          margin: 2rem auto;
+          text-align: center;
+          color: #f8fafc;
+        ">
+          <h1>${lang === 'en' ? 'Challenge Terminated' : 'Виклик завершено'}</h1>
+          <p>
+            ${lang === 'en'
+              ? `You earned ${totalScore} point${totalScore === 1 ? '' : 's'} out of ${questions.length}.`
+              : `Ви отримали ${totalScore} бал${totalScore === 1 ? '' : 'ів'} з ${questions.length}.`}
+          </p>
+          <blockquote style="font-style: italic; margin: 20px 20px; color: #facc15;">
+            "${lang === 'en'
+              ? 'If you quit on the process, you are quitting on the result.'
+              : 'Якщо ви здаєтесь під час процесу — ви відмовляєтесь від результату.'}"
+            — Idowu Koyenikan
+          </blockquote>
+          <button onclick="location.reload()">
+            ${lang === 'en' ? 'Go to Start' : 'Повернутися на початок'}
+          </button>
+        </section>
+      `;
+    }
   </script>
-  
 </body>
 </html>
