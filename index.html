@@ -68,7 +68,7 @@
 
   <div id="instructions" class="hidden">
     <h2 data-en="Instructions" data-uk="Інструкції">Instructions</h2>
-    <p id="instructionsText" data-en="You will be presented with 19 questions. Use a variety of OSR tools and techniques to find the answers. Good luck!" data-uk="Вам буде запропоновано 19 запитання. Використовуйте різноманітні інструменти OSR і техніки для знаходження відповідей. Удачі!">You will be presented with 22 questions. Use a variety of OSR tools and techniques to find the answers. Good luck!</p>
+    <p id="instructionsText" data-en="You will be presented with 19 questions. Use a variety of OSR tools and techniques to find the answers. If you choose to copy and paste your answer, make sure to use CTRL+V to paste it, or you can type it in. Good luck!" data-uk="Вам буде запропоновано 19 запитань. Використовуйте різноманітні інструменти OSR і техніки для знаходження відповідей. Якщо Ви копіюєте відповідь, вставте її, використовуючи CTRL+V. Або просто, введіть Вашу відповідь вручну. Удачі!">You will be presented with 19 questions. Use a variety of OSR tools and techniques to find the answers. If you choose to copy and paste your answer, make sure to use CTRL+V to paste it, or you can type it in. Good luck!</p>
     <button id="letsGoBtn" data-en="Let's go" data-uk="Поїхали">Let's go</button>
   </div>
 
@@ -86,7 +86,15 @@
   </div>
 
   <button id="quitBtn" data-en="I quit" data-uk="Я здаюся">I quit</button>
-
+  <script>
+	  document.addEventListener('contextmenu', event => event.preventDefault());
+	  document.addEventListener('keydown', event => {
+		if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C'))) {
+		  event.preventDefault();
+		}
+	  });
+  </script>
+  
   <script>
     let totalScore = 0;
     let lang = 'en';
