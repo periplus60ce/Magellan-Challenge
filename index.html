@@ -1,4 +1,125 @@
-const questions = [
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Magellan Research Challenge</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    #message, #liveMessage {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #timerContainer {
+      width: 100%;
+      background-color: #ddd;
+      height: 20px;
+      margin-top: 10px;
+    }
+    #timerBar {
+      height: 20px;
+      background-color: #4caf50;
+      width: 100%;
+      transition: width 1s linear;
+    }
+    #quitBtn {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+    }
+    #languageToggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+  </style>
+</head>
+<body>
+  <button id="languageToggle">UKR</button>
+
+  <div id="challenge">
+    <h1 data-en="Magellan Research Challenge" data-uk="Дослідницький виклик Магеллана">Magellan Research Challenge</h1>
+    <p id="question" data-en="Test, test, test. How many letters are there in the Ukrainian alphabet?" data-uk="Тест, тест, тест. Скільки літер в українському алфавіті?">Test, test, test. How many letters are there in the Ukrainian alphabet?</p>
+    <input type="text" id="answerInput" data-en-placeholder="Your answer here" data-uk-placeholder="Ваша відповідь тут" placeholder="Your answer here">
+    <button id="startSubmitBtn" data-en="SUBMIT" data-uk="ВІДПРАВИТИ">SUBMIT</button>
+    <div id="message"></div>
+    <button id="continueBtn" class="hidden" data-en="CLICK TO CONTINUE" data-uk="НАТИСНІТЬ, ЩОБ ПРОДОВЖИТИ">CLICK TO CONTINUE</button>
+  </div>
+
+  <div id="instructions" class="hidden">
+    <h2 data-en="Instructions" data-uk="Інструкції">Instructions</h2>
+    <p id="instructionsText" 
+       data-en="You will be presented with 19 questions. Use a variety of OSINT tools and techniques to find the answers. If you choose to copy and paste your answer, make sure to use CTRL+V to paste it, or you can type it in. Good luck!" 
+       data-uk="Вам буде запропоновано 19 запитань. Використовуйте різноманітні інструменти та методи OSINT для пошуку відповідей. Якщо ви копіюєте відповідь, вставте її за допомогою CTRL+V або введіть вручну. Успіхів!">
+      You will be presented with 19 questions. Use a variety of OSINT tools and techniques to find the answers. If you choose to copy and paste your answer, make sure to use CTRL+V to paste it, or you can type it in. Good luck!
+    </p>
+    <button id="letsGoBtn" data-en="Let's go" data-uk="Поїхали">Let's go</button>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <h1 data-en="Magellan Challenge" data-uk="Виклик Магеллана">Magellan Challenge</h1>
+    <p id="liveInstruction" data-en="Press 'ENTER' to confirm your answer." data-uk="Натисніть 'ENTER', щоб підтвердити відповідь.">Press 'ENTER' to confirm your answer.</p>
+    <p id="liveQuestion"></p>
+    <input type="text" id="liveAnswer" data-en-placeholder="Your answer here" data-uk-placeholder="Ваша відповідь тут" placeholder="Your answer here">
+    <button id="submitBtn" data-en="SUBMIT" data-uk="ВІДПРАВИТИ">SUBMIT</button>
+    <button id="skipBtn" data-en="SKIP" data-uk="ПРОПУСТИТИ">SKIP</button>
+    <div id="liveMessage"></div>
+    <div id="timerContainer"><div id="timerBar"></div></div>
+    <p id="scoreDisplay"></p>
+    <button id="restartBtn" class="hidden" data-en="Restart Challenge" data-uk="Почати заново">Restart Challenge</button>
+  </div>
+
+  <button id="quitBtn" data-en="I quit" data-uk="Я здаюся">I quit</button>
+
+  <script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', event => {
+      if (event.key === 'F12' || (event.ctrlKey && event.shiftKey && ['I', 'J', 'C'].includes(event.key))) {
+        event.preventDefault();
+      }
+    });
+
+    let totalScore = 0;
+    let lang = 'en';
+    let remainingQuestions = [];
+    let usedQuestions = [];
+    let timerInterval;
+
+    const liveQuestion = document.getElementById('liveQuestion');
+    const liveAnswer = document.getElementById('liveAnswer');
+    const liveMessage = document.getElementById('liveMessage');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const continueBtn = document.getElementById('continueBtn');
+    const instructionsDiv = document.getElementById('instructions');
+    const challengeDiv = document.getElementById('challenge');
+    const letsGoBtn = document.getElementById('letsGoBtn');
+    const quizDiv = document.getElementById('quiz');
+    const submitBtn = document.getElementById('submitBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const quitBtn = document.getElementById('quitBtn');
+
+    const questions = [
       {
     en: "Refer to government databases (laws, reports, statistics) What number is stamped at the bottom left of the first page of a hyperlinked document in the section regarding wildcat dumping in Cochise County, AZ, code compliance?",
     uk: "Зверніться до державних баз даних (закони, звіти, статистика). Який номер стоїть у нижньому лівому куті першої сторінки гіперпосилання у розділі про незаконні сміттєзвалища в окрузі Кочіс, штат Арізона (дотримання норм)?",
@@ -95,3 +216,164 @@ const questions = [
     answer: "StairMaster"
   }
     ];
+
+    function shuffle(array) {
+      let current = array.length, temp, random;
+      while (current) {
+        random = Math.floor(Math.random() * current--);
+        temp = array[current];
+        array[current] = array[random];
+        array[random] = temp;
+      }
+      return array;
+    }
+
+    function updateLanguage() {
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.textContent = el.getAttribute(`data-${lang}`);
+      });
+
+      document.querySelectorAll('[data-en-placeholder]').forEach(el => {
+        el.setAttribute('placeholder', el.getAttribute(`data-${lang}-placeholder`));
+      });
+
+      const currentQ = usedQuestions[usedQuestions.length - 1];
+      if (currentQ) liveQuestion.textContent = currentQ[lang];
+
+      const instructionsText = document.getElementById('instructionsText');
+      instructionsText.textContent = instructionsText.getAttribute(`data-${lang}`);
+    }
+
+    document.getElementById('languageToggle').addEventListener('click', () => {
+      lang = lang === 'en' ? 'uk' : 'en';
+      document.getElementById('languageToggle').textContent = lang === 'en' ? 'UKR' : 'ENG';
+      updateLanguage();
+    });
+
+    document.getElementById('startSubmitBtn').addEventListener('click', () => {
+      const answer = document.getElementById('answerInput').value.trim();
+      const message = document.getElementById('message');
+      if (answer === '33') {
+        message.textContent = lang === 'en' ? 'Correct. Let\'s continue.' : 'Правильно. Переходимо далі.';
+        continueBtn.classList.remove('hidden');
+      } else {
+        message.textContent = lang === 'en' ? 'Try again.' : 'Спробуйте ще раз.';
+      }
+    });
+
+    continueBtn.addEventListener('click', () => {
+      challengeDiv.classList.add('hidden');
+      instructionsDiv.classList.remove('hidden');
+    });
+
+    letsGoBtn.addEventListener('click', () => {
+      instructionsDiv.classList.add('hidden');
+      quizDiv.classList.remove('hidden');
+      totalScore = 0;
+      usedQuestions = [];
+      remainingQuestions = shuffle([...questions]);
+      renderRandomQuestion();
+    });
+
+    function renderRandomQuestion() {
+      if (remainingQuestions.length === 0) {
+        showResults();
+        return;
+      }
+
+      const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+      const q = remainingQuestions[randomIndex];
+
+      usedQuestions.push(q);
+      remainingQuestions.splice(randomIndex, 1);
+
+      liveQuestion.textContent = q[lang];
+      liveQuestion.dataset.correctAnswer = q.answer;
+      liveAnswer.value = '';
+      liveMessage.textContent = '';
+      liveAnswer.focus();
+    }
+
+    function checkAnswer() {
+      const userAnswer = liveAnswer.value.trim();
+      const correctAnswer = liveQuestion.dataset.correctAnswer;
+
+      if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+        liveMessage.textContent = lang === 'en' ? 'Correct!' : 'Правильно!';
+        totalScore++;
+      } else {
+        liveMessage.textContent = lang === 'en' ? 'Incorrect. Try the next one.' : 'Неправильно. Спробуйте наступне.';
+      }
+
+      setTimeout(renderRandomQuestion, 1000);
+    }
+
+    function skipQuestion() {
+      liveMessage.textContent = lang === 'en' ? 'Skipped.' : 'Пропущено.';
+      setTimeout(renderRandomQuestion, 1000);
+    }
+
+    function showResults() {
+      liveQuestion.textContent = lang === 'en' ? 'Challenge Complete! Well done!' : 'Виклик завершено! Чудова робота!';
+      liveAnswer.classList.add('hidden');
+      submitBtn.classList.add('hidden');
+      skipBtn.classList.add('hidden');
+      scoreDisplay.textContent = `${lang === 'en' ? 'Score' : 'Результат'}: ${totalScore}/19`;
+      restartBtn.classList.remove('hidden');
+    }
+
+    submitBtn.addEventListener('click', checkAnswer);
+    skipBtn.addEventListener('click', skipQuestion);
+    liveAnswer.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { checkAnswer(); }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      totalScore = 0;
+      usedQuestions = [];
+      remainingQuestions = shuffle([...questions]);
+      updateLanguage();
+      quizDiv.classList.remove('hidden');
+      restartBtn.classList.add('hidden');
+      liveAnswer.classList.remove('hidden');
+      submitBtn.classList.remove('hidden');
+      skipBtn.classList.remove('hidden');
+      scoreDisplay.textContent = '';
+      renderRandomQuestion();
+    });
+
+    quitBtn.addEventListener('click', quitChallenge);
+
+    function quitChallenge() {
+      if (typeof timerInterval !== 'undefined') clearInterval(timerInterval);
+      quizDiv.innerHTML = `
+        <section style="
+          background-color: rgba(15, 23, 42, 0.85);
+          padding: 2rem;
+          border-radius: 12px;
+          max-width: 800px;
+          margin: 2rem auto;
+          text-align: center;
+          color: #f8fafc;
+        ">
+          <h1>${lang === 'en' ? 'Challenge Terminated' : 'Виклик завершено'}</h1>
+          <p>
+            ${lang === 'en'
+              ? `You earned ${totalScore} point${totalScore === 1 ? '' : 's'} out of 19.`
+              : `Ви отримали ${totalScore} бал${totalScore === 1 ? '' : 'ів'} з 19.`}
+          </p>
+          <blockquote style="font-style: italic; margin: 20px 20px; color: #facc15;">
+            "${lang === 'en'
+              ? 'If you quit on the process, you are quitting on the result.'
+              : 'Якщо ви здаєтесь під час процесу — ви відмовляєтесь від результату.'}"
+            — Idowu Koyenikan
+          </blockquote>
+          <button onclick="location.reload()">
+            ${lang === 'en' ? 'Go to Start' : 'Повернутися на початок'}
+          </button>
+        </section>
+      `;
+    }
+  </script>
+</body>
+</html>
