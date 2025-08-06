@@ -295,18 +295,18 @@
     }
 
     function checkAnswer() {
-      const userAnswer = liveAnswer.value.trim();
-      const correctAnswer = liveQuestion.dataset.correctAnswer;
+  const userAnswer = liveAnswer.value.trim();
+  const correctAnswer = liveQuestion.dataset.correctAnswer;
 
-      if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
-        liveMessage.textContent = lang === 'en' ? 'Correct!' : 'Правильно!';
-        totalScore++;
-      } else {
-        liveMessage.textContent = lang === 'en' ? 'Incorrect. Try the next one.' : 'Неправильно. Спробуйте наступне.';
-      }
-
-      setTimeout(renderRandomQuestion, 1000);
-    }
+  if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+    liveMessage.textContent = lang === 'en' ? 'Correct!' : 'Правильно!';
+    totalScore++;
+    setTimeout(renderRandomQuestion, 1000);
+  } else {
+    liveMessage.textContent = lang === 'en' ? 'Incorrect. Try again.' : 'Неправильно. Спробуйте ще раз.';
+    // Do not advance the question — allow user to try again
+  }
+}
 
     function skipQuestion() {
       liveMessage.textContent = lang === 'en' ? 'Skipped.' : 'Пропущено.';
